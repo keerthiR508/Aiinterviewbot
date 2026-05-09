@@ -10,7 +10,7 @@ const RecruiterDashboard = () => {
   const [questions, setQuestions] = useState([]);
   const [resumes, setResumes] = useState([]);
   const [externalMessages, setExternalMessages] = useState([]);
-  
+
   // New question form state
   const [qText, setQText] = useState('');
   const [qOptions, setQOptions] = useState(['', '', '', '']);
@@ -105,7 +105,7 @@ const RecruiterDashboard = () => {
 
   const handleBotInstruction = async (instruction, data) => {
     const lower = instruction.toLowerCase();
-    
+
     if (instruction === 'SET_ATS_CUTOFF') {
       try {
         await axios.put('/api/recruiter/cutoff', { cutoff: Number(data) }, {
@@ -140,8 +140,8 @@ const RecruiterDashboard = () => {
             {user.company || 'None'}
           </span>
         </div>
-        <ChatbotUI 
-          user={user} 
+        <ChatbotUI
+          user={user}
           externalMessages={externalMessages}
           onBotInstruction={handleBotInstruction}
         />
@@ -189,7 +189,7 @@ const RecruiterDashboard = () => {
                           </span>
                         </td>
                         <td className="p-4">
-                          <button 
+                          <button
                             onClick={() => {
                               const resume = resumes.find(res => String(res.candidate) === String(r.candidate?._id));
                               if (resume) {
@@ -215,11 +215,10 @@ const RecruiterDashboard = () => {
                         </td>
                         <td className="p-4">
                           <div className="flex flex-col gap-1">
-                            <span className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              r.status === 'Pass' 
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                            }`}>
+                            <span className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${r.status === 'Pass'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                              }`}>
                               {r.status === 'Pass' ? 'Selected' : 'Rejected'}
                             </span>
                             {r.reason && (
@@ -268,18 +267,18 @@ const RecruiterDashboard = () => {
                           </span>
                         </td>
                         <td className="p-4 flex gap-4">
-                          <a 
-                            href={`http://localhost:5000${res.resumeFilePath}`} 
-                            target="_blank" 
+                          <a
+                            href={`http://localhost:5000${res.resumeFilePath}`}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-indigo-500/20 flex items-center gap-2 transition-all"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                             Preview
                           </a>
-                          <a 
-                            href={`http://localhost:5000${res.resumeFilePath}`} 
-                            download 
+                          <a
+                            href={`http://localhost:5000${res.resumeFilePath}`}
+                            download
                             className="bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/20 flex items-center gap-2 transition-all"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -318,7 +317,7 @@ const RecruiterDashboard = () => {
                     <label className="block text-slate-400 text-sm mb-1 font-medium">Options (4)</label>
                     <div className="space-y-2">
                       {qOptions.map((opt, i) => (
-                        <input key={i} required className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder={`Option ${i+1}`} value={opt} onChange={e => updateOption(i, e.target.value)} />
+                        <input key={i} required className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" placeholder={`Option ${i + 1}`} value={opt} onChange={e => updateOption(i, e.target.value)} />
                       ))}
                     </div>
                   </div>
