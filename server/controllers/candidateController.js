@@ -1,4 +1,4 @@
-const pdf = require('pdf-parse');
+//const pdf = require('pdf-parse');
 const Result = require('../models/Result');
 const Question = require('../models/Question');
 const User = require('../models/User');
@@ -9,7 +9,7 @@ const path = require('path');
 
 // Predefined keyword list for IT roles
 const IT_KEYWORDS = [
-  "python", "java", "javascript", "react", "node", "sql", "html", "css", 
+  "python", "java", "javascript", "react", "node", "sql", "html", "css",
   "aws", "cloud", "power bi", "data analysis", "excel", "linux"
 ];
 
@@ -159,17 +159,17 @@ const uploadResume = async (req, res) => {
     // Store in Result model for Recruiter Dashboard
     await Result.findOneAndUpdate(
       { candidate: req.user._id, roundName: 'Resume', company: normalizedCompany },
-      { 
+      {
         score: finalScore,
         totalQuestions: 10,
-        status: 'Pass' 
+        status: 'Pass'
       },
       { upsert: true }
     );
 
     const payload = {
       score: finalScore,
-      atsScore: finalScore, 
+      atsScore: finalScore,
       cutoff: cutoff,
       matchedKeywords,
       missingKeywords,
@@ -195,12 +195,12 @@ const uploadResume = async (req, res) => {
 // @route   POST /api/candidate/submit-answers
 // @access  Protected
 const submitAnswers = async (req, res) => {
-  const { roundName, answers, company } = req.body; 
-  
+  const { roundName, answers, company } = req.body;
+
   try {
     let score = 0;
     const totalQuestions = answers.length;
-    
+
     for (const answer of answers) {
       const q = await Question.findById(answer.questionId);
       if (q && q.correctAnswer === answer.selectedOption) {
