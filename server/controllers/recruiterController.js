@@ -65,6 +65,7 @@ const getResumes = async (req, res) => {
       return res.status(400).json({ message: 'Recruiter company not set' });
     }
     const resumes = await ResumeScore.find({ company: company.toLowerCase() })
+      .select('-resumeFilePath')
       .sort({ createdAt: -1 });
     res.json(resumes);
   } catch (error) {

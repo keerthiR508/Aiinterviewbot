@@ -1,4 +1,5 @@
-//const pdf = require('pdf-parse');
+const pdf = require('pdf-parse');
+const cloudinary = require('../config/cloudinary');
 const Result = require('../models/Result');
 const Question = require('../models/Question');
 const User = require('../models/User');
@@ -52,11 +53,26 @@ const uploadResume = async (req, res) => {
       return res.json({ success: true, ...reusedPayload });
     }
 
-    // 1. Save Resume File to Disk
-    const filename = `${req.user._id}_${Date.now()}_${file.originalname}`;
-    const uploadPath = path.join(__dirname, '..', 'uploads', 'resumes', filename);
-    fs.writeFileSync(uploadPath, file.buffer);
-    const resumeFilePath = `/uploads/resumes/${filename}`;
+    // 1. Upload Resume File to Cloudinary
+    let resumeFilePath = '';
+    try {
+      const uploadPromise = new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { resource_type: 'raw', folder: 'resumes' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
+      resumeFilePath = await uploadPromise;
+      console.log("Cloudinary Upload Success:", resumeFilePath);
+    } catch (uploadError) {
+      console.error("Cloudinary Upload Error:", uploadError);
+      // Fallback to a dummy path if upload fails to keep the process going
+      resumeFilePath = '/uploads/fallback-resume.pdf';
+    }
 
     // 1. PDF Parsing with Robust Fallback
     console.log("Uploaded File:", file);

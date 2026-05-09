@@ -152,7 +152,7 @@ const RecruiterDashboard = () => {
         {/* Navigation Tabs (if manual override needed) */}
         <div className="flex gap-4 mb-8">
           <button onClick={() => setActiveTab('results')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'results' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>Results</button>
-          <button onClick={() => setActiveTab('resumes')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'resumes' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>Resumes</button>
+          <button onClick={() => setActiveTab('resumes')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'resumes' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>ATS Analysis</button>
           <button onClick={() => setActiveTab('questions')} className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'questions' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>Questions Bank</button>
         </div>
 
@@ -169,7 +169,6 @@ const RecruiterDashboard = () => {
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Candidate Name</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Email</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Profile</th>
-                    <th className="p-4 font-medium text-xs uppercase tracking-wider">Resume</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Round</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Score</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Status</th>
@@ -187,22 +186,6 @@ const RecruiterDashboard = () => {
                           <span className="bg-slate-900 text-indigo-300 px-2.5 py-1 rounded-md text-[10px] font-bold border border-slate-700 uppercase">
                             {r.candidate?.profileType || 'N/A'}
                           </span>
-                        </td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => {
-                              const resume = resumes.find(res => String(res.candidate) === String(r.candidate?._id));
-                              if (resume) {
-                                window.open(`http://localhost:5000${resume.resumeFilePath}`, '_blank');
-                              } else {
-                                alert("Resume file not found for this candidate.");
-                              }
-                            }}
-                            className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 text-xs font-semibold group-hover:translate-x-1 transition-transform"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            View PDF
-                          </button>
                         </td>
                         <td className="p-4">
                           <div className="flex flex-col">
@@ -241,7 +224,7 @@ const RecruiterDashboard = () => {
           <div className="animate-in slide-in-from-bottom-4 duration-500">
             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-              Candidate Resumes
+              ATS Candidate Analysis
             </h3>
             <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
               <table className="w-full text-left text-slate-300">
@@ -249,41 +232,38 @@ const RecruiterDashboard = () => {
                   <tr>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Candidate Name</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">Email</th>
+                    <th className="p-4 font-medium text-xs uppercase tracking-wider">Extracted Skills</th>
                     <th className="p-4 font-medium text-xs uppercase tracking-wider">ATS Score</th>
-                    <th className="p-4 font-medium text-xs uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700">
                   {resumes.length === 0 ? (
-                    <tr><td colSpan="4" className="p-8 text-center text-slate-500 italic">No resumes uploaded for your company yet.</td></tr>
+                    <tr><td colSpan="4" className="p-8 text-center text-slate-500 italic">No ATS analysis available for your company yet.</td></tr>
                   ) : (
                     resumes.map((res) => (
                       <tr key={res._id} className="hover:bg-slate-700/30 transition-colors">
                         <td className="p-4 font-semibold text-white">{res.candidateName}</td>
                         <td className="p-4 text-slate-400">{res.candidateEmail}</td>
                         <td className="p-4">
+                          <div className="flex flex-wrap gap-1.5 max-w-md">
+                            {res.matchedKeywords?.length > 0 ? (
+                              res.matchedKeywords.slice(0, 8).map((skill, idx) => (
+                                <span key={idx} className="bg-indigo-500/10 text-indigo-300 text-[10px] px-2 py-1 rounded-md border border-indigo-500/20 whitespace-nowrap">
+                                  {skill}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-slate-500 text-xs italic">No specific skills extracted</span>
+                            )}
+                            {res.matchedKeywords?.length > 8 && (
+                              <span className="text-slate-500 text-[10px] px-2 py-1 whitespace-nowrap">+{res.matchedKeywords.length - 8} more</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
                           <span className={`font-mono font-bold ${res.score >= 5 ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {res.score} / 10
                           </span>
-                        </td>
-                        <td className="p-4 flex gap-4">
-                          <a
-                            href={`http://localhost:5000${res.resumeFilePath}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-indigo-500/20 flex items-center gap-2 transition-all"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            Preview
-                          </a>
-                          <a
-                            href={`http://localhost:5000${res.resumeFilePath}`}
-                            download
-                            className="bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/20 flex items-center gap-2 transition-all"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                            Download
-                          </a>
                         </td>
                       </tr>
                     ))
